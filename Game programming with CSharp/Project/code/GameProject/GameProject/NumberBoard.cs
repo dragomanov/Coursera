@@ -42,7 +42,7 @@ namespace GameProject
         /// <param name="sideLength">the side length for the board</param>
         /// <param name="correctNumber">the correct number</param>
         /// <param name="soundBank">the sound bank for sound effects</param>
-        public NumberBoard(ContentManager contentManager, Vector2 center, int sideLength, 
+        public NumberBoard(ContentManager contentManager, Vector2 center, int sideLength,
             int correctNumber, SoundBank soundBank)
         {
             // load content for the board and create draw rectangle
@@ -50,10 +50,17 @@ namespace GameProject
             drawRectangle = new Rectangle((int)center.X - sideLength / 2, (int)center.Y - sideLength / 2, sideLength, sideLength);
 
             // calculate side length for number tiles
-            tileSideLength = (sideLength - BORDER_SIZE * (NUM_COLUMNS + 1)) / NUM_COLUMNS; 
+            tileSideLength = (sideLength - BORDER_SIZE * (NUM_COLUMNS + 1)) / NUM_COLUMNS;
 
             // initialize array of number tiles
-
+            for (int row = 0; row < NUM_ROWS; row++)
+            {
+                for (int col = 0; col < NUM_COLUMNS; col++)
+                {
+                    int number = NUM_COLUMNS * row + col + 1;
+                    tiles[row, col] = new NumberTile(contentManager, CalculateTileCenter(row, col), tileSideLength, number, correctNumber, null);
+                }
+            }
         }
 
         #endregion
@@ -71,6 +78,13 @@ namespace GameProject
         public bool Update(GameTime gameTime, MouseState mouse)
         {
             // update all the number tiles
+            for (int row = 0; row < NUM_ROWS; row++)
+            {
+                for (int col = 0; col < NUM_COLUMNS; col++)
+                {
+                    tiles[row, col].Update(gameTime, mouse);
+                }
+            }
 
             // return false because the correct number wasn't guessed
             return false;
@@ -83,12 +97,13 @@ namespace GameProject
         public void Draw(SpriteBatch spriteBatch)
         {
             // draw the board
-            
             spriteBatch.Draw(boardTexture, drawRectangle, Color.White);
-            
 
             // draw all the number tiles
-            
+            foreach (var tile in tiles)
+            {
+                tile.Draw(spriteBatch);
+            }
         }
 
         #endregion
@@ -102,7 +117,7 @@ namespace GameProject
         private void LoadContent(ContentManager contentManager)
         {
             // load the background for the board
-            boardTexture = contentManager.Load < Texture2D >("board");
+            boardTexture = contentManager.Load<Texture2D>("board");
 
         }
 
@@ -114,9 +129,9 @@ namespace GameProject
         /// <returns>the center of the tile in the given row and column</returns>
         private Vector2 CalculateTileCenter(int row, int column)
         {
-            int upperLeftX = drawRectangle.X + (BORDER_SIZE * (column + 1)) + 
+            int upperLeftX = drawRectangle.X + (BORDER_SIZE * (column + 1)) +
                 tileSideLength * column;
-            int upperLeftY = drawRectangle.Y + (BORDER_SIZE * (row + 1)) + 
+            int upperLeftY = drawRectangle.Y + (BORDER_SIZE * (row + 1)) +
                 tileSideLength * row;
             return new Vector2(upperLeftX + tileSideLength / 2,
                 upperLeftY + tileSideLength / 2);

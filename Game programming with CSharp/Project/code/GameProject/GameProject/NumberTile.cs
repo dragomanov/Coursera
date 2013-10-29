@@ -53,7 +53,7 @@ namespace GameProject
             this.originalSideLength = sideLength;
 
             // set sound bank field
-            
+
 
             // load content for the tile and create draw rectangle
             LoadContent(contentManager, number);
@@ -76,7 +76,14 @@ namespace GameProject
         /// <return>true if the correct number was guessed, false otherwise</return>
         public bool Update(GameTime gameTime, MouseState mouse)
         {
-
+            if (drawRectangle.Contains(mouse.X, mouse.Y))
+            {
+                sourceRectangle.X = 64;
+            }
+            else
+            {
+                sourceRectangle.X = 0;
+            }
             // if we get here, return false
             return false;
         }
@@ -88,6 +95,7 @@ namespace GameProject
         public void Draw(SpriteBatch spriteBatch)
         {
             // draw the tile
+            spriteBatch.Draw(texture, drawRectangle, sourceRectangle, Color.White);
         }
 
         #endregion
@@ -105,7 +113,8 @@ namespace GameProject
             string numberString = ConvertIntToString(number);
 
             // load content for the tile and set source rectangle
-
+            texture = contentManager.Load<Texture2D>(numberString);
+            sourceRectangle = new Rectangle(drawRectangle.X, drawRectangle.Y, 64, 64);
         }
 
         /// <summary>

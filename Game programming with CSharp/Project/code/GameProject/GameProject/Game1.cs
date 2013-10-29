@@ -108,6 +108,10 @@ namespace GameProject
             }
 
             // if we're actually playing, update mouse state and update board
+            if (gameState == GameState.Play)
+            {
+                numberBoard.Update(gameTime, Mouse.GetState());
+            }
 
             base.Update(gameTime);
         }
